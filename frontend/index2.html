@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SSTV Encoder / Decoder</title>
+
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      margin: 20px;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .row {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .col {
+      flex: 1 1 360px;
+    }
+
+    button {
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border: 1px solid #ccc;
+    }
+
+    .preview {
+      width: 320px;
+      height: 240px;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      border: 1px dashed #ccc;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>SSTV Encoder / Decoder</h1>
+
+  <div class="row">
+    <!-- ENCODE -->
+    <div class="col">
+      <div class="card">
+        <h2>Encode (Image → WAV)</h2>
+
+        <input type="file" id="imgInput" accept="image/*" />
+
+        <div style="margin-top:12px">
+          <button id="encodeBtn" disabled>Encode</button>
+        </div>
+
+        <div style="margin-top:12px">
+          <div id="audioPreview" class="preview">No audio yet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DECODE -->
+    <div class="col">
+      <div class="card">
+        <h2>Decode (WAV → Image)</h2>
+
+        <input type="file" id="audioInput" accept="audio/wav" />
+
+        <div style="margin-top:12px">
+          <button id="decodeBtn" disabled>Decode</button>
+        </div>
+
+        <div style="margin-top:12px">
+          <div id="imagePreview" class="preview">No image yet</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'http://localhost:8080';
+
+    const imgInput = document.getElementById('imgInput');
+    const audioInput = document.getElementById('audioInput');
+    const encodeBtn = document.getElementById('encodeBtn');
+    const decodeBtn = document.getElementById('decodeBtn');
+    const audioPreview = document.getElementById('audioPreview');
+    const imagePreview = document.getElementById('imagePreview');
+
+    let busy = false;
+
+    imgInput.addEventListener('change', () => {
+      encodeBtn.disabled = !imgInput.files.length || busy;
+    });
+
+    audioInput.addEventListener('change', () => {
+      decodeBtn.disabled = !audioInput.files.length || busy;
+    });
+
+    encodeBtn.addEventListener('click', async () => {
+      if (!imgInput.files.length) return;
+
+      busy = true;
+      encodeBtn.disabled = true;
+
+      try {
+        const fd = new FormData();
+        fd.append('image', imgInput.files[0]);
+
+        const res = await fetch(`${API_BASE}/api/encode`, {
+          method: 'POST',
+          body: fd
+        });
+
+        if (!res.ok) throw new Error('Encode failed');
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+
+        audioPreview.innerHTML = `
+          <audio controls src="${url}"></audio>
+        `;
+      } catch (e) {
+        alert(e.message);
+      } finally {
+        busy = false;
+        encodeBtn.disabled = false;
+      }
+    });
+
+    decodeBtn.addEventListener('click', async () => {
+      if (!audioInput.files.length) return;
+
+      busy = true;
+      decodeBtn.disabled = true;
+
+      try {
+        const fd = new FormData();
+        fd.append('audio', audioInput.files[0]);
+
+        const res = await fetch(`${API_BASE}/api/decode`, {
+          method: 'POST',
+          body: fd
+        });
+
+        if (!res.ok) throw new Error('Decode failed');
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+
+        imagePreview.innerHTML = `
+          <img src="${url}" alt="decoded image" />
+        `;
+      } catch (e) {
+        alert(e.message);
+      } finally {
+        busy = false;
+        decodeBtn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encode</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="hero">
+        <h1 style="font-family: pixelify sans;">
+            Encoding a file
+        </h1>
+        <p style="font-family: pixelify sans;">
+            Encoding a file refers to conversion of a picture file to a .wav audio signal using Robot32 SSTV transmission
+        </p>
+    </header>
+    <main class="container">
+        <section class="left">
+            <img src="assets/signal.png" alt="PixelTone">
+        </section>
+
+        <section class="right">
+            <div class="tv">
+                <h2 style="font-family: pixelify sans; color: aliceblue;">Choose a picture here!</h2>
+                <input type="file" class="imgInputclass" id="imgInput" accept="image/*" />
+                <label for="imgInput" class="imgInputclass" id="fileBtn">choose image</label>
+                <button id="encodeBtn" style="font-family: pixelify sans;">ENCODE</button>
+                <div style="margin-top:12px">
+                    <div id="audioPreview" class="preview">No audio yet</div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <footer>
+        <a href="#">about pixeltone</a>
+    </footer>
+    <script>
+        const API_BASE = 'http://localhost:8080';
+            const imgInput = document.getElementById('imgInput');
+            const audioInput = document.getElementById('audioInput');
+            const encodeBtn = document.getElementById('encodeBtn');
+            const decodeBtn = document.getElementById('decodeBtn');
+            const audioPreview = document.getElementById('audioPreview');
+            const imagePreview = document.getElementById('imagePreview');
+            let busy = false;
+            imgInput.addEventListener('change', () => {
+                encodeBtn.disabled = !imgInput.files.length || busy;
+            });
+            encodeBtn.addEventListener('click', async () => {
+      if (!imgInput.files.length) return;
+
+      busy = true;
+      encodeBtn.disabled = true;
+
+      try {
+        const fd = new FormData();
+        fd.append('image', imgInput.files[0]);
+
+        const res = await fetch(`${API_BASE}/api/encode`, {
+          method: 'POST',
+          body: fd
+        });
+
+        if (!res.ok) throw new Error('Encode failed');
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+
+        audioPreview.innerHTML = `
+          <audio controls src="${url}"></audio>
+        `;
+      } catch (e) {
+        alert(e.message);
+      } finally {
+        busy = false;
+        encodeBtn.disabled = false;
+      }
+    });
+    const input = document.getElementById("imgInput");
+    const btn = document.getElementById("fileBtn");
+
+    input.addEventListener("change", () => {
+    if (input.files.length > 0) {
+        btn.textContent = "📁 " + input.files[0].name;
+    } else {
+        btn.textContent = "Choose File";
+    }
+    });
+
+    </script>
+</body>
+</html>

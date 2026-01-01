@@ -16,6 +16,12 @@ body {
   text-align: center;
   border-bottom: 6px solid #b5b5b5;
 }
+.mid {
+    padding: 50px 0 40px;
+    padding-right: 11vw;
+    text-align: right;
+    font-size:larger;
+}
 
 .hero h1 {
   font-size: 52px;
@@ -151,6 +157,10 @@ footer a {
   .left img {
     width: 300px;
   }
+  .mid {
+    text-align: center;
+    align-items: center;
+  }
 }
 
 
@@ -186,6 +196,10 @@ footer a {
     font-size: 22px;
     padding: 18px;
   }
+  .mid {
+    text-align: center;
+    align-items: center;
+  }
 }
 
 
@@ -219,5 +233,105 @@ footer a {
 
   footer {
     text-align: center;
+  }
+  .mid  {
+    text-align: center;
+    align-items: center;
+
+  }
+}
+
+.imgInputclass{
+  color: white;
+  font-weight: bold;
+  font-family: "pixelify sans";
+  font-size: small;
+  display: inline-block;
+  padding: 14px 28px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(1px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  color: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.preview{
+  color: whitesmoke;
+  font-weight: bold;
+  font-family: "pixelify sans";
+  display: inline-block;
+
+}
+
+.audioInputclass{
+  color: white;
+  font-weight: bold;
+  font-family: "pixelify sans";
+  font-size: small;
+  display: inline-block;
+  padding: 14px 28px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(1px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+  color: #fff;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.preview-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+/* Download button */
+.download-btn {
+  text-decoration: none;
+  text-align: center;
+  background: #e6e6e6;
+  color: #000;
+  padding: 16px 22px;
+  border-radius: 14px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 -4px 0 #b5b5b5,
+    0 6px 12px rgba(0,0,0,0.3);
+
+  transition: all 0.15s ease;
+}
+
+.download-btn:hover {
+  background: #d2d2d2;
+}
+
+.download-btn:active {
+  transform: translateY(2px);
+  box-shadow: inset 0 2px 0 #b5b5b5;
+}
+
+
+@media (max-width: 768px) {
+  .preview-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .download-btn {
+    width: 100%;
   }
 }

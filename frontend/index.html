@@ -1,128 +1,49 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SSTV Encoder/Decoder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelTone</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="hero">
+        <h1 style="font-family: pixelify sans;">
+            PIXELTONE
+        </h1>
+        <p style="font-family: pixelify sans;">
+            a radio-enthusiast's dream rock
+        </p>
+    </header>
+    <div class="mid">
+        <p style="font-family: pixelify sans;">An online SSTV encoding and decoding project</p>
+    </div>
+    <main class="container">
+        <section class="left">
+            <img src="assets/radio.png" alt="PixelTone">
+        </section>
 
-    <style>
-      body { font-family: system-ui, sans-serif; margin: 20px; }
-      .card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
-      .row { display: flex; gap: 16px; flex-wrap: wrap; }
-      .col { flex: 1 1 360px; }
-      button { padding: 8px 12px; }
-      img { max-width: 100%; height: auto; border: 1px solid #ccc; }
-      .preview {
-        width: 320px; height: 240px;
-        background: #f5f5f5;
-        display: flex; align-items: center; justify-content: center;
-        color: #888;
-      }
-    </style>
-
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
-    <script crossorigin src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
-  </head>
-
-  <body>
-    <h1>SSTV Encoder / Decoder</h1>
-    <div id="root"></div>
-
-    <script type="text/babel">
-      const API_BASE = 'http://localhost:8080';
-
-      function App() {
-        const [imgFile, setImgFile] = React.useState(null);
-        const [wavUrl, setWavUrl] = React.useState('');
-        const [audioFile, setAudioFile] = React.useState(null);
-        const [pngUrl, setPngUrl] = React.useState('');
-        const [busy, setBusy] = React.useState(false);
-
-        const onEncode = async () => {
-          if (!imgFile) return;
-          setBusy(true);
-          try {
-            const fd = new FormData();
-            fd.append('image', imgFile);
-
-            const res = await fetch(`${API_BASE}/api/encode`, {
-              method: 'POST',
-              body: fd
-            });
-
-            if (!res.ok) throw new Error('Encode failed');
-
-            const blob = await res.blob();
-            setWavUrl(URL.createObjectURL(blob));
-          } catch (e) {
-            alert(e.message);
-          } finally {
-            setBusy(false);
-          }
-        };
-
-        const onDecode = async () => {
-          if (!audioFile) return;
-          setBusy(true);
-          try {
-            const fd = new FormData();
-            fd.append('audio', audioFile);
-
-            const res = await fetch(`${API_BASE}/api/decode`, {
-              method: 'POST',
-              body: fd
-            });
-
-            if (!res.ok) throw new Error('Decode failed');
-
-            const blob = await res.blob();
-            setPngUrl(URL.createObjectURL(blob));
-          } catch (e) {
-            alert(e.message);
-          } finally {
-            setBusy(false);
-          }
-        };
-
-        return (
-          <div className="row">
-            <div className="col">
-              <div className="card">
-                <h2>Encode (Image → WAV)</h2>
-                <input type="file" accept="image/*"
-                  onChange={e => setImgFile(e.target.files[0] || null)} />
-                <div style={{ marginTop: 12 }}>
-                  <button onClick={onEncode} disabled={busy || !imgFile}>
-                    Encode
-                  </button>
-                </div>
-                <div style={{ marginTop: 12 }}>
-                  {wavUrl ? <audio controls src={wavUrl} /> : <div className="preview">No audio yet</div>}
-                </div>
-              </div>
+        <section class="right">
+            <div class="tv">
+                <button id="btn1" style="font-family: pixelify sans;">ENCODE</button>
+                
+                <button id="btn2" style="font-family: pixelify sans;">DECODE</button>
             </div>
-
-            <div className="col">
-              <div className="card">
-                <h2>Decode (WAV → Image)</h2>
-                <input type="file" accept="audio/wav"
-                  onChange={e => setAudioFile(e.target.files[0] || null)} />
-                <div style={{ marginTop: 12 }}>
-                  <button onClick={onDecode} disabled={busy || !audioFile}>
-                    Decode
-                  </button>
-                </div>
-                <div style={{ marginTop: 12 }}>
-                  {pngUrl ? <img alt="decoded" src={pngUrl} /> : <div className="preview">No image yet</div>}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      }
-
-      ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+        </section>
+    </main>
+    <footer>
+        <a href="#" style="font-family: pixelify sans; font-weight: 900;">about pixeltone</a>
+    </footer>
+    <script>
+        document.getElementById("btn1").onclick = function(){
+            window.location.href = "encode.html";
+        }
+        document.getElementById("btn2").onclick = function(){
+            window.location.href = "decode.html";
+        }
     </script>
-  </body>
+</body>
 </html>
