@@ -56,7 +56,7 @@ app.post('/api/decode', upload.single('audio'), async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`SSTV backend listening on :${PORT}`);
+  console.log(`PixelTone backend listening on :${PORT}`);
 });
 
 // ---------- WAV PARSER ----------
