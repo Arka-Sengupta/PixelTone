@@ -1,8 +1,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&family=Righteous&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,17 +13,18 @@
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="assets/radio.png" type="image/x-icon">
 </head>
+
 <body>
     <header class="hero">
-        <h1 style="font-family: pixelify sans;">
+        <h1>
             PIXELTONE
         </h1>
-        <p style="font-family: pixelify sans;">
+        <p>
             a radio-enthusiast's dream rock
         </p>
     </header>
     <div class="mid">
-        <p style="font-family: pixelify sans;">An online SSTV encoding and decoding project</p>
+        <p>An online SSTV encoding and decoding project</p>
     </div>
     <main class="container">
         <section class="left">
@@ -29,22 +33,23 @@
 
         <section class="right">
             <div class="tv">
-                <button id="btn1" style="font-family: pixelify sans;">ENCODE</button>
-                
-                <button id="btn2" style="font-family: pixelify sans;">DECODE</button>
+                <button id="btn1">ENCODE</button>
+
+                <button id="btn2">DECODE</button>
             </div>
         </section>
     </main>
     <footer>
-        <a href="about.html" style="font-family: pixelify sans; font-weight: 900;">about pixeltone</a>
+        <a href="about.html">about pixeltone</a>
     </footer>
     <script>
-        document.getElementById("btn1").onclick = function(){
+        document.getElementById("btn1").onclick = function () {
             window.location.href = "encode.html";
         }
-        document.getElementById("btn2").onclick = function(){
+        document.getElementById("btn2").onclick = function () {
             window.location.href = "decode.html";
         }
     </script>
 </body>
+
 </html>

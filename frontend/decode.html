@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,7 +9,9 @@
   <!-- Pixel font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&family=Righteous&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
 
   <link rel="shortcut icon" href="assets/radio.png" type="image/x-icon">
   <link rel="stylesheet" href="style.css">
@@ -16,112 +19,123 @@
 
 <body>
 
-<header class="hero">
-  <h1 style="font-family: pixelify sans;">Decoding a file</h1>
-  <p style="font-family: pixelify sans;">Decoding a .wav file back into an image</p>
-</header>
+  <header class="hero">
+    <h1>Decoding a file</h1>
+    <p>Decoding a .wav file back into an image</p>
+  </header>
 
-<main class="container">
-  <section class="left">
-    <img src="assets/process.png" alt="PixelTone">
-  </section>
+  <main class="container">
+    <section class="left">
+      <img src="assets/process.png" alt="PixelTone">
+    </section>
 
-  <section class="right">
-    <div class="tv">
+    <section class="right">
+      <div class="tv">
 
-      <h2 style="color: aliceblue; font-family: pixelify sans;">
-        decode a .wav file here!
-      </h2>
-      <p style="color: aliceblue; font-family: pixelify sans;">the backend is a render web service so first time it may take time</p>
+        <h2>
+          decode a .wav file here!
+        </h2>
+        <p>the backend is a render web service so first time it may take time</p>
 
-      
-      <input type="file" id="audioInput" accept="audio/wav">
 
-      
-      <label for="audioInput" class="audioInputclass" id="fileBtn">
-        choose .wav file
-      </label>
+        <input type="file" id="audioInput" accept="audio/wav">
 
-      <button id="decodeBtn" style="font-family: pixelify sans;">
-        DECODE
-      </button>
 
-<div class="preview-wrapper">
-  <div class="preview" id="imagePreview">
-    No image yet
-  </div>
+        <label for="audioInput" class="audioInputclass" id="fileBtn">
+          choose .wav file
+        </label>
 
-  <a id="downloadBtn" class="download-btn" style="display:none;font-family: pixelify sans;">
-    DOWNLOAD IMAGE
-  </a>
-</div>
+        <button id="decodeBtn">
+          DECODE
+        </button>
 
-    </div>
-  </section>
-</main>
+        <div id="loaderContainer" class="loader-container">
+          <div class="loader"></div>
+          <div class="processing-text">RECEIVING...</div>
+        </div>
 
-<footer>
-  <a href="about.html" style="font-family: pixelify sans; font-weight: 900;">about pixeltone</a>
-</footer>
+        <div class="preview-wrapper">
+          <div class="preview" id="imagePreview">
+            No image yet
+          </div>
 
-<script>
-const API_BASE = "https://pixeltone-backend.onrender.com";
+          <a id="downloadBtn" class="download-btn" style="display:none;">
+            DOWNLOAD IMAGE
+          </a>
+        </div>
 
-const audioInput   = document.getElementById("audioInput");
-const fileBtn      = document.getElementById("fileBtn");
-const decodeBtn    = document.getElementById("decodeBtn");
-const imagePreview = document.getElementById("imagePreview");
+      </div>
+    </section>
+  </main>
 
-let busy = false;
+  <footer>
+    <a href="about.html">about pixeltone</a>
+  </footer>
 
-/* Show filename inside the glass button */
-audioInput.addEventListener("change", () => {
-  if (audioInput.files.length > 0) {
-    fileBtn.textContent = "📁 " + audioInput.files[0].name;
-  } else {
-    fileBtn.textContent = "choose .wav file";
-  }
-});
+  <script>
+    const API_BASE = "https://pixeltone-backend.onrender.com";
 
-/* Decode */
-decodeBtn.addEventListener("click", async () => {
-  if (!audioInput.files.length || busy) return;
+    const audioInput = document.getElementById("audioInput");
+    const fileBtn = document.getElementById("fileBtn");
+    const decodeBtn = document.getElementById("decodeBtn");
+    const imagePreview = document.getElementById("imagePreview");
 
-  busy = true;
-  decodeBtn.disabled = true;
-  imagePreview.textContent = "Decoding signal...";
+    let busy = false;
 
-  try {
-    const fd = new FormData();
-    fd.append("audio", audioInput.files[0]);
-
-    const res = await fetch(`${API_BASE}/api/decode`, {
-      method: "POST",
-      body: fd
+    /* Show filename inside the glass button */
+    audioInput.addEventListener("change", () => {
+      if (audioInput.files.length > 0) {
+        fileBtn.textContent = "📁 " + audioInput.files[0].name;
+      } else {
+        fileBtn.textContent = "choose .wav file";
+      }
     });
 
-    if (!res.ok) throw new Error("Decode failed");
+    /* Decode */
+    decodeBtn.addEventListener("click", async () => {
+      if (!audioInput.files.length || busy) return;
 
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
+      busy = true;
+      decodeBtn.disabled = true;
+      imagePreview.textContent = "Decoding signal...";
 
-    imagePreview.innerHTML = `<img src="${url}" />`;
+      try {
+        const fd = new FormData();
+        fd.append("audio", audioInput.files[0]);
 
-    const downloadBtn = document.getElementById("downloadBtn");
-    downloadBtn.href = url;
-    downloadBtn.download = "decoded-image.png";
-    downloadBtn.style.display = "inline-block";
+        document.getElementById('loaderContainer').style.display = 'flex';
+        imagePreview.style.display = 'none';
 
-  } catch (err) {
-    alert(err.message);
-    imagePreview.textContent = "No image yet";
-    document.getElementById("downloadBtn").style.display = "none";
-  } finally {
-    busy = false;
-    decodeBtn.disabled = false;
-  }
-});
-</script>
+        const res = await fetch(`${API_BASE}/api/decode`, {
+          method: "POST",
+          body: fd
+        });
+
+        if (!res.ok) throw new Error("Decode failed");
+
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+
+        imagePreview.innerHTML = `<img src="${url}" />`;
+
+        const downloadBtn = document.getElementById("downloadBtn");
+        downloadBtn.href = url;
+        downloadBtn.download = "decoded-image.png";
+        downloadBtn.style.display = "inline-block";
+
+      } catch (err) {
+        alert(err.message);
+        imagePreview.textContent = "No image yet";
+        document.getElementById("downloadBtn").style.display = "none";
+      } finally {
+        busy = false;
+        decodeBtn.disabled = false;
+        document.getElementById('loaderContainer').style.display = 'none';
+        imagePreview.style.display = 'block';
+      }
+    });
+  </script>
 
 </body>
+
 </html>

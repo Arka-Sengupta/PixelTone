@@ -1,8 +1,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+<link
+    href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;700&family=Righteous&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet">
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,13 +13,15 @@
     <link rel="stylesheet" href="style.css">
     <link rel="shortcut icon" href="assets/radio.png" type="image/x-icon">
 </head>
+
 <body>
     <header class="hero">
-        <h1 style="font-family: pixelify sans;">
+        <h1>
             Encoding a file
         </h1>
-        <p style="font-family: pixelify sans;">
-            Encoding a file refers to conversion of a picture file to a .wav audio signal using Robot36 SSTV transmission
+        <p>
+            Encoding a file refers to conversion of a picture file to a .wav audio signal using Robot36 SSTV
+            transmission
         </p>
     </header>
     <main class="container">
@@ -26,11 +31,20 @@
 
         <section class="right">
             <div class="tv">
-                <h2 style="font-family: pixelify sans; color: aliceblue;">Choose a picture here!</h2>
-                <p style="color: aliceblue; font-family: pixelify sans;">the backend is a render web service so first time it may take time</p>
+                <h2>Choose a picture here!</h2>
+                <p>the backend is a render web service so first time it may take time</p>
                 <input type="file" class="imgInputclass" id="imgInput" accept="image/*" />
                 <label for="imgInput" class="imgInputclass" id="fileBtn">choose image</label>
-                <button id="encodeBtn" style="font-family: pixelify sans;">ENCODE</button>
+                <button id="encodeBtn">ENCODE</button>
+
+                <div id="loaderContainer" class="loader-container">
+                    <div class="loader"></div>
+                    <div class="processing-text">TRANSMITTING...</div>
+                </div>
+
+
+
+
                 <div style="margin-top:12px">
                     <div id="audioPreview" class="preview">No audio yet</div>
                 </div>
@@ -38,61 +52,67 @@
         </section>
     </main>
     <footer>
-        <a href="about.html" style="font-family: pixelify sans; font-weight: 900;">about pixeltone</a>
+        <a href="about.html">about pixeltone</a>
     </footer>
     <script>
         const API_BASE = 'https://pixeltone-backend.onrender.com';
-            const imgInput = document.getElementById('imgInput');
-            const audioInput = document.getElementById('audioInput');
-            const encodeBtn = document.getElementById('encodeBtn');
-            const decodeBtn = document.getElementById('decodeBtn');
-            const audioPreview = document.getElementById('audioPreview');
-            const imagePreview = document.getElementById('imagePreview');
-            let busy = false;
-            imgInput.addEventListener('change', () => {
-                encodeBtn.disabled = !imgInput.files.length || busy;
-            });
-            encodeBtn.addEventListener('click', async () => {
-      if (!imgInput.files.length) return;
-
-      busy = true;
-      encodeBtn.disabled = true;
-
-      try {
-        const fd = new FormData();
-        fd.append('image', imgInput.files[0]);
-
-        const res = await fetch(`${API_BASE}/api/encode`, {
-          method: 'POST',
-          body: fd
+        const imgInput = document.getElementById('imgInput');
+        const audioInput = document.getElementById('audioInput');
+        const encodeBtn = document.getElementById('encodeBtn');
+        const decodeBtn = document.getElementById('decodeBtn');
+        const audioPreview = document.getElementById('audioPreview');
+        const imagePreview = document.getElementById('imagePreview');
+        let busy = false;
+        imgInput.addEventListener('change', () => {
+            encodeBtn.disabled = !imgInput.files.length || busy;
         });
+        encodeBtn.addEventListener('click', async () => {
+            if (!imgInput.files.length) return;
 
-        if (!res.ok) throw new Error('Encode failed');
+            busy = true;
+            encodeBtn.disabled = true;
 
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
+            try {
+                const fd = new FormData();
+                fd.append('image', imgInput.files[0]);
 
-        audioPreview.innerHTML = `
+                document.getElementById('loaderContainer').style.display = 'flex';
+                audioPreview.style.display = 'none';
+
+                const res = await fetch(`${API_BASE}/api/encode`, {
+                    method: 'POST',
+                    body: fd
+                });
+
+                if (!res.ok) throw new Error('Encode failed');
+
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+
+                audioPreview.innerHTML = `
           <audio controls src="${url}"></audio>
         `;
-      } catch (e) {
-        alert(e.message);
-      } finally {
-        busy = false;
-        encodeBtn.disabled = false;
-      }
-    });
-    const input = document.getElementById("imgInput");
-    const btn = document.getElementById("fileBtn");
+            } catch (e) {
+                alert(e.message);
+            } finally {
+                busy = false;
+                encodeBtn.disabled = false;
+                document.getElementById('loaderContainer').style.display = 'none';
+                audioPreview.style.display = 'block';
+            }
+        });
+        const input = document.getElementById("imgInput");
+        const btn = document.getElementById("fileBtn");
 
-    input.addEventListener("change", () => {
-    if (input.files.length > 0) {
-        btn.textContent = "📁 " + input.files[0].name;
-    } else {
-        btn.textContent = "Choose File";
-    }
-    });
+        input.addEventListener("change", () => {
+            if (input.files.length > 0) {
+                btn.textContent = "📁 " + input.files[0].name;
+            } else {
+                btn.textContent = "Choose File";
+            }
+        });
 
     </script>
 </body>
+
 </html>
